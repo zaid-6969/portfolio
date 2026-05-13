@@ -1,15 +1,19 @@
-import React from "react";
 import { Routes, Route } from "react-router-dom";
-import Homepage from "./pages/Homepage";
 
-const App = () => {
+import Home from "./pages/Home";
+import ProjectDetails from "./pages/ProjectDetails";
+import AdminLogin from "./pages/AdminLogin"
+import Dashboard from "./pages/Dashboard";
+
+function App() {
   return (
-    <div>
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-      </Routes>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/project/:id" element={<ProjectDetails />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin/dashboard" element={<Dashboard />} />
+    </Routes>
   );
-};
+}
 
 export default App;
