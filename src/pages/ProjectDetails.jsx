@@ -13,7 +13,7 @@ const ProjectDetails = () => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/v1/projects/${id}`);
+        const { data } = await axios.get(`https://portfolio-backend-vyl5.onrender.com/api/v1/projects/${id}`);
         setProject(data);
       } catch (e) { console.error(e); }
       finally { setLoading(false); }
