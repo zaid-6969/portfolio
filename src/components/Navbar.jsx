@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/slices/authSlice";
-import { toggleTheme } from "../store/slices/themeSlice";
+import { toggleTheme } from "../store/slices/ThemeSlice";
 import { useState, useEffect } from "react";
 import {
   RiLayoutMasonryLine, RiShieldUserLine, RiLogoutBoxLine,
