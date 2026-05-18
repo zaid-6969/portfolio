@@ -3,7 +3,7 @@ import projectsReducer from "./slices/projectsSlice";
 import authReducer from "./slices/authSlice";
 import designReducer from "./slices/designSlice";
 import themeReducer from "./slices/themeSlice";
-import draftReducer from "./slices/draftslice";
+import draftReducer from "./slices/draftSlice";
 
 const store = configureStore({
   reducer: {
