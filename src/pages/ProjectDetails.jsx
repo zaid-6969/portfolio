@@ -3,7 +3,14 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import Loader from "../components/Loader";
 import Navbar from "../components/Navbar";
-import { RiGithubLine, RiExternalLinkLine, RiArrowLeftLine, RiCodeLine, RiPriceTag3Line } from "react-icons/ri";
+import {
+  RiGithubLine, RiExternalLinkLine, RiArrowLeftLine,
+  RiCodeLine, RiPriceTag3Line,
+} from "react-icons/ri";
+
+/* ── helpers ── */
+const safe = (v, fallback) => v || fallback;
+const imgWidthMap = { full: "100%", large: "75%", medium: "52%", small: "36%" };
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -11,7 +18,7 @@ const ProjectDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const doFetch = async () => {
+    (async () => {
       try {
         const { data } = await axios.get(
           `https://portfolio-backend-vyl5.onrender.com/api/v1/projects/${id}`
@@ -19,8 +26,7 @@ const ProjectDetails = () => {
         setProject(data);
       } catch (e) { console.error(e); }
       finally { setLoading(false); }
-    };
-    doFetch();
+    })();
   }, [id]);
 
   if (loading) return <div style={{ minHeight: "100vh" }}><Navbar /><Loader fullScreen /></div>;
@@ -40,107 +46,83 @@ const ProjectDetails = () => {
 
   const d = project.designConfig || {};
 
-  // Resolve all design values with safe fallbacks
-  const bg = d.backgroundColor || "var(--bg-card)";
-  const textColor = d.textColor || "var(--text-primary)";
-  const btnColor = d.buttonColor || "#6366f1";
-  const btnTextColor = d.buttonTextColor || "#ffffff";
-  const tagColor = d.tagColor || btnColor;
-  const borderRadius = d.borderRadius || "16px";
-  const boxShadow = d.boxShadow || "var(--shadow-card)";
-  const border = d.border || "1px solid var(--border)";
-  const padding = d.padding || "32px";
-
-  const titleFF = d.titleFontFamily || "var(--font-display)";
-  const titleFS = d.titleFontSize || "2rem";
-  const titleFW = d.titleFontWeight || "800";
-
-  const descFF = d.descFontFamily || "var(--font-body)";
-  const descFS = d.descFontSize || "1rem";
-  const descFW = d.descFontWeight || "400";
-
-  const tagFS = d.tagFontSize || "0.75rem";
-
-  const imageSize = d.imageSize || "full";
-  const imagePosition = d.imagePosition || "top";
+  const bg          = safe(d.backgroundColor, "var(--bg-card)");
+  const textColor   = safe(d.textColor, "var(--text-primary)");
+  const btnColor    = safe(d.buttonColor, "#6366f1");
+  const btnTextColor= safe(d.buttonTextColor, "#ffffff");
+  const tagColor    = safe(d.tagColor, btnColor);
+  const borderRadius= safe(d.borderRadius, "16px");
+  const boxShadow   = safe(d.boxShadow, "var(--shadow-card)");
+  const border      = safe(d.border, "1px solid var(--border)");
+  const padding     = safe(d.padding, "32px");
+  const titleFF     = safe(d.titleFontFamily, "var(--font-display)");
+  const titleFS     = safe(d.titleFontSize, "2rem");
+  const titleFW     = safe(d.titleFontWeight, "800");
+  const descFF      = safe(d.descFontFamily, "var(--font-body)");
+  const descFS      = safe(d.descFontSize, "1rem");
+  const descFW      = safe(d.descFontWeight, "400");
+  const tagFS       = safe(d.tagFontSize, "0.75rem");
+  const imageSize   = safe(d.imageSize, "full");
+  const imagePos    = safe(d.imagePosition, "top");
   const imageHeight = parseInt(d.imageHeight) || 420;
-  const isHidden = imageSize === "hidden";
-  const imgWidthMap = { full: "100%", large: "80%", medium: "55%", small: "38%" };
-  const imgWidthVal = imgWidthMap[imageSize] || "100%";
-  const isHoriz = imagePosition === "left" || imagePosition === "right";
+  const isHidden    = imageSize === "hidden";
+  const isHoriz     = imagePos === "left" || imagePos === "right";
+  const isFull      = imageSize === "full";
+  const imgBR       = Math.min(parseInt(borderRadius) || 12, 16) + "px";
 
-  const imgBorderRadius = parseInt(borderRadius) > 12 ? "12px" : (parseInt(borderRadius) || 8) + "px";
-
-  /* Image block */
-  const ImageBlock = !isHidden && (
-    <div style={{
-      flexShrink: 0,
-      width: isHoriz ? imgWidthVal : "100%",
-      height: isHoriz ? "auto" : imageHeight,
-      minHeight: isHoriz ? 280 : "auto",
-      borderRadius: imgBorderRadius,
-      overflow: "hidden",
-      background: "linear-gradient(135deg, rgba(99,102,241,0.15), rgba(167,139,250,0.15))",
-    }}>
-      <img src={project.image} alt={project.projectName}
-        style={{ width: "100%", height: isHoriz ? "100%" : imageHeight, objectFit: "cover", display: "block" }} />
+  /* ── Tags row ── */
+  const TagsRow = project.tags?.length > 0 && (
+    <div style={{ display: "flex", gap: 7, flexWrap: "wrap" }}>
+      {project.tags.map((tag, i) => (
+        <span key={i} style={{
+          display: "inline-flex", alignItems: "center", gap: 4,
+          padding: "4px 12px", borderRadius: 99,
+          fontSize: tagFS, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase",
+          background: `${tagColor}22`, color: tagColor, border: `1px solid ${tagColor}35`,
+        }}>
+          <RiPriceTag3Line size={11} /> {tag}
+        </span>
+      ))}
     </div>
   );
 
-  /* Content block */
-  const ContentBlock = (
-    <div style={{ flex: 1, minWidth: 0 }}>
-      {/* Tags */}
-      {project.tags?.length > 0 && (
-        <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginBottom: 18 }}>
-          {project.tags.map((tag, i) => (
-            <span key={i} style={{
-              display: "inline-flex", alignItems: "center", gap: 4,
-              padding: "4px 13px", borderRadius: 99,
-              fontSize: tagFS, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase",
-              background: `${tagColor}18`, color: tagColor, border: `1px solid ${tagColor}30`,
-            }}>
-              <RiPriceTag3Line size={11} /> {tag}
-            </span>
-          ))}
-        </div>
-      )}
+  /* ── Title ── */
+  const TitleEl = (
+    <h1 style={{
+      fontFamily: titleFF, fontSize: titleFS, fontWeight: titleFW,
+      color: textColor, lineHeight: 1.15, margin: 0,
+    }}>
+      {project.projectName}
+    </h1>
+  );
 
-      {/* Title */}
-      <h1 style={{
-        fontFamily: titleFF, fontSize: titleFS, fontWeight: titleFW,
-        color: textColor, lineHeight: 1.15, marginBottom: 18,
-      }}>
-        {project.projectName}
-      </h1>
-
-      {/* Description */}
+  /* ── Bottom content (desc + tech + buttons) ── */
+  const BottomContent = (
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <p style={{
         fontFamily: descFF, fontSize: descFS, fontWeight: descFW,
-        color: textColor, opacity: 0.85, lineHeight: 1.75, marginBottom: 24,
+        color: textColor, opacity: 0.85, lineHeight: 1.75, margin: 0,
       }}>
         {project.description}
       </p>
 
-      {/* Divider */}
-      <div style={{ height: 1, background: `${btnColor}25`, marginBottom: 24 }} />
+      <div style={{ height: 1, background: `${btnColor}20` }} />
 
-      {/* Technologies */}
       {project.languages?.length > 0 && (
-        <div style={{ marginBottom: 28 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
-            <RiCodeLine style={{ color: btnColor }} size={16} />
-            <span style={{ fontFamily: titleFF, fontWeight: 700, fontSize: "0.8rem", letterSpacing: "0.07em", textTransform: "uppercase", color: textColor, opacity: 0.6 }}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 10 }}>
+            <RiCodeLine style={{ color: btnColor }} size={15} />
+            <span style={{ fontFamily: titleFF, fontWeight: 700, fontSize: "0.75rem", letterSpacing: "0.08em", textTransform: "uppercase", color: textColor, opacity: 0.55 }}>
               Technologies
             </span>
           </div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {project.languages.map((lang, i) => (
               <span key={i} style={{
-                padding: "6px 14px", borderRadius: 8, fontSize: "0.85rem",
+                padding: "5px 13px", borderRadius: 8, fontSize: "0.82rem",
                 fontWeight: 600, fontFamily: descFF,
-                background: `${btnColor}15`, color: btnColor,
-                border: `1px solid ${btnColor}25`,
+                background: `${btnColor}14`, color: btnColor,
+                border: `1px solid ${btnColor}22`,
               }}>
                 {String(lang).trim()}
               </span>
@@ -149,19 +131,18 @@ const ProjectDetails = () => {
         </div>
       )}
 
-      {/* CTA Buttons */}
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
         {project.githubLink && (
           <a href={project.githubLink} target="_blank" rel="noreferrer" style={{
             display: "inline-flex", alignItems: "center", gap: 8,
-            padding: "12px 22px", borderRadius: "8px",
+            padding: "11px 22px", borderRadius: 8,
             backgroundColor: btnColor, color: btnTextColor,
             textDecoration: "none", fontWeight: 700, fontSize: "0.875rem",
             fontFamily: titleFF, transition: "transform 0.2s, box-shadow 0.2s",
             boxShadow: `0 4px 14px ${btnColor}40`,
           }}
-            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 8px 22px ${btnColor}55`; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = `0 4px 14px ${btnColor}40`; }}
+            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 8px 24px ${btnColor}55`; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = `0 4px 14px ${btnColor}40`; }}
           >
             <RiGithubLine size={17} /> View on GitHub
           </a>
@@ -169,14 +150,14 @@ const ProjectDetails = () => {
         {project.deploymentLink && (
           <a href={project.deploymentLink} target="_blank" rel="noreferrer" style={{
             display: "inline-flex", alignItems: "center", gap: 8,
-            padding: "12px 22px", borderRadius: "8px",
+            padding: "11px 22px", borderRadius: 8,
             background: "transparent", color: btnColor,
             border: `2px solid ${btnColor}`,
             textDecoration: "none", fontWeight: 700, fontSize: "0.875rem",
             fontFamily: titleFF, transition: "all 0.2s",
           }}
             onMouseEnter={e => { e.currentTarget.style.background = `${btnColor}12`; e.currentTarget.style.transform = "translateY(-2px)"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.transform = "none"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.transform = ""; }}
           >
             <RiExternalLinkLine size={17} /> Live Demo
           </a>
@@ -185,28 +166,146 @@ const ProjectDetails = () => {
     </div>
   );
 
-  /* Assemble layout */
+  /* ══════════════════════════════════════════
+     LAYOUT ASSEMBLY
+     ══════════════════════════════════════════ */
   let innerLayout;
+
   if (isHidden) {
-    innerLayout = ContentBlock;
-  } else if (imagePosition === "top") {
-    innerLayout = <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>{ImageBlock}{ContentBlock}</div>;
-  } else if (imagePosition === "bottom") {
-    innerLayout = <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>{ContentBlock}{ImageBlock}</div>;
-  } else if (imagePosition === "left") {
+    /* No image — just stack title + tags + content */
     innerLayout = (
-      <div style={{ display: "flex", flexDirection: "row", gap: 28, alignItems: "flex-start" }}
-        className="detail-horiz-layout">
-        {ImageBlock}{ContentBlock}
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        {TagsRow}
+        {TitleEl}
+        {BottomContent}
       </div>
     );
+
+  } else if (isHoriz) {
+    /* LEFT or RIGHT — image column beside title+tags+content */
+    const imgWidth = imgWidthMap[imageSize] || "50%";
+    const ImgCol = (
+      <div style={{
+        flexShrink: 0,
+        width: imgWidth,
+        minWidth: 200,
+        borderRadius: imgBR,
+        overflow: "hidden",
+        alignSelf: "stretch",
+        minHeight: 260,
+      }}>
+        <img src={project.image} alt={project.projectName}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+      </div>
+    );
+    const TextCol = (
+      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 18 }}>
+        {TagsRow}
+        {TitleEl}
+        {BottomContent}
+      </div>
+    );
+    innerLayout = (
+      <div className="detail-horiz" style={{
+        display: "flex",
+        flexDirection: imagePos === "left" ? "row" : "row-reverse",
+        gap: 28, alignItems: "flex-start",
+      }}>
+        {ImgCol}
+        {TextCol}
+      </div>
+    );
+
   } else {
-    innerLayout = (
-      <div style={{ display: "flex", flexDirection: "row-reverse", gap: 28, alignItems: "flex-start" }}
-        className="detail-horiz-layout">
-        {ImageBlock}{ContentBlock}
-      </div>
-    );
+    /* TOP or BOTTOM */
+    if (isFull) {
+      /* ── FULL image: hero mode ──
+         Image fills the top/bottom of the card.
+         Title + tags overlay on the image with a gradient.
+         Description + tech + buttons sit outside the image. */
+      const HeroImg = (
+        <div style={{
+          position: "relative",
+          width: "100%",
+          height: imageHeight,
+          overflow: "hidden",
+          /* negative margin to bleed into card padding */
+          margin: imagePos === "top"
+            ? `calc(-1 * ${padding}) calc(-1 * ${padding}) 0`
+            : `0 calc(-1 * ${padding}) calc(-1 * ${padding})`,
+          width: `calc(100% + 2 * ${padding})`,
+          borderRadius: imagePos === "top"
+            ? `${borderRadius} ${borderRadius} 0 0`
+            : `0 0 ${borderRadius} ${borderRadius}`,
+        }}>
+          <img src={project.image} alt={project.projectName}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          {/* gradient overlay — bottom for top-image, top for bottom-image */}
+          <div style={{
+            position: "absolute", inset: 0,
+            background: imagePos === "top"
+              ? "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)"
+              : "linear-gradient(to bottom, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)",
+          }} />
+          {/* Tags + title overlaid */}
+          <div style={{
+            position: "absolute",
+            bottom: imagePos === "top" ? 28 : "auto",
+            top: imagePos === "bottom" ? 28 : "auto",
+            left: 28, right: 28,
+            display: "flex", flexDirection: "column", gap: 10,
+          }}>
+            {TagsRow}
+            <h1 style={{
+              fontFamily: titleFF, fontSize: titleFS, fontWeight: titleFW,
+              color: "#fff", lineHeight: 1.15, margin: 0,
+              textShadow: "0 2px 12px rgba(0,0,0,0.5)",
+            }}>
+              {project.projectName}
+            </h1>
+          </div>
+        </div>
+      );
+
+      innerLayout = imagePos === "top"
+        ? <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>{HeroImg}{BottomContent}</div>
+        : <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>{BottomContent}{HeroImg}</div>;
+
+    } else {
+      /* ── Non-full image (large/medium/small) top/bottom ──
+         Image sits on one side, title + tags beside it.
+         Description + tech + buttons span full width below both. */
+      const shortImgW = imgWidthMap[imageSize] || "50%";
+      const ShortImg = (
+        <div style={{
+          flexShrink: 0,
+          width: shortImgW,
+          height: imageHeight,
+          borderRadius: imgBR,
+          overflow: "hidden",
+          minWidth: 160,
+        }}>
+          <img src={project.image} alt={project.projectName}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        </div>
+      );
+      const HeaderBeside = (
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 14 }}>
+          {TagsRow}
+          {TitleEl}
+        </div>
+      );
+      const TopRow = (
+        <div className="detail-horiz" style={{ display: "flex", flexDirection: "row", gap: 24, alignItems: "center" }}>
+          {ShortImg}
+          {HeaderBeside}
+        </div>
+      );
+
+      innerLayout = imagePos === "top"
+        ? <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>{TopRow}{BottomContent}</div>
+        : <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>{BottomContent}{TopRow}</div>;
+    }
   }
 
   return (
@@ -227,14 +326,18 @@ const ProjectDetails = () => {
       </div>
 
       <div style={{ maxWidth: 1100, margin: "20px auto", padding: "0 24px 64px", animation: "fadeIn 0.45s ease" }}>
-        <div style={{ backgroundColor: bg, color: textColor, borderRadius, boxShadow, border, padding, overflow: "hidden" }}>
+        <div style={{
+          backgroundColor: bg, color: textColor,
+          borderRadius, boxShadow, border, padding,
+          overflow: "hidden",
+        }}>
           {innerLayout}
         </div>
       </div>
 
       <style>{`
         @media (max-width: 700px) {
-          .detail-horiz-layout { flex-direction: column !important; }
+          .detail-horiz { flex-direction: column !important; }
         }
       `}</style>
     </div>

@@ -6,6 +6,8 @@ import Home from "./pages/Home";
 import ProjectDetails from "./pages/ProjectDetails";
 import AdminLogin from "./pages/AdminLogin";
 import Dashboard from "./pages/Dashboard";
+import CreateProject from "./pages/CreateProject";
+import CustomizePage from "./pages/CustomizePage";
 
 function App() {
   const { mode } = useSelector((s) => s.theme);
@@ -20,6 +22,8 @@ function App() {
       <Route path="/project/:id" element={<ProjectDetails />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/dashboard" element={<Dashboard />} />
+      <Route path="/admin/create" element={<CreateProject />} />
+      <Route path="/admin/customize" element={<CustomizePage />} />
     </Routes>
   );
 }
