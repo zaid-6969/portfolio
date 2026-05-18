@@ -6,7 +6,7 @@ import Home from "./pages/Home";
 import ProjectDetails from "./pages/ProjectDetails";
 import AdminLogin from "./pages/AdminLogin";
 import Dashboard from "./pages/Dashboard";
-import CreateProject from "./pages/Createproject";
+import CreateProject from "./pages/CreateProject";
 import CustomizePage from "./pages/CustomizePage";
 
 function App() {
