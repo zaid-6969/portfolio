@@ -2,8 +2,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import projectsReducer from "./slices/projectsSlice";
 import authReducer from "./slices/authSlice";
 import designReducer from "./slices/designSlice";
-import themeReducer from "./slices/ThemeSlice";
-import draftReducer from "./slices/Draftslice";
+import themeReducer from "./slices/themeSlice";
+import draftReducer from "./slices/draftslice";
 
 const store = configureStore({
   reducer: {
