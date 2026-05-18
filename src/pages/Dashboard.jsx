@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProjects, deleteProject, setSelectedProject } from "../store/slices/projectsSlice";
-import { saveDraft, clearDraft } from "../store/slices/Draftslice";
+import { saveDraft, clearDraft } from "../store/slices/draftslice";
 import { loadDesignConfig, resetDesignConfig } from "../store/slices/designSlice";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
