@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { createProject, updateProject } from "../store/slices/projectsSlice";
+// import { createProject, updateProject } from "../store/slices/projectsSlice";
 import { clearDraft } from "../store/slices/draftSlice";
 import { resetDesignConfig, updateDesignConfig, setPreviewMode } from "../store/slices/designSlice";
 import Navbar from "../components/Navbar";
